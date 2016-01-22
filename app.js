@@ -123,7 +123,7 @@ function run () {
 				return run();
 			}
 
-			return github.createIssue(item.user.githubAccessToken, item.user.username, item.project.name, {
+			return github.createIssue(process.env.GITHUB_AUTH_TOKEN, item.user.username, item.project.name, {
 				title: item.err.name + ': ' + item.err.message,
 				body: issue(item.err),
 				labels: item.err.props.labels || []
