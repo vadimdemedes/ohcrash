@@ -135,7 +135,7 @@ function run () {
 			run();
 		})
 		.catch(function (err) {
-			console.log(err.stack);
+			console.log(err, err.stack);
 		});
 }
 
