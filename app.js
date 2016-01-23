@@ -131,7 +131,9 @@ function run () {
 				return run();
 			}
 
-			rootRef.child('projects/' + item.user.id + '/' + item.project.id).child('updatedAt').set(new Date());
+			rootRef.child('projects/' + item.user.id + '/' + item.project.id).child('updatedAt').set(new Date(), function (err) {
+				console.log(err.stack);
+			});
 
 			return github.createIssue(process.env.GITHUB_AUTH_TOKEN, item.user.username, item.project.name, {
 				title: item.err.name + ': ' + item.err.message,
