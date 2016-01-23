@@ -8,6 +8,7 @@ const StackUtils = require('stack-utils');
 const Firebase = require('firebase');
 const route = require('koa-route');
 const parse = require('co-body');
+const cors = require('koa-cors');
 const ejs = require('ejs');
 const got = require('got');
 const koa = require('koa');
@@ -28,6 +29,7 @@ const template = fs.readFileSync('template.ejs', 'utf8');
 
 let app = koa();
 
+app.use(cors());
 app.use(route.post('/v1/errors', function * () {
 	yield authorize(this);
 

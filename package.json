@@ -1,13 +1,14 @@
 {
-	"scripts": {
-		"start": "node app"
-	},
+  "scripts": {
+    "start": "node app"
+  },
   "dependencies": {
     "co-body": "^4.0.0",
     "ejs": "^2.3.4",
     "firebase": "^2.3.2",
     "got": "^6.1.0",
     "koa": "^1.1.2",
+    "koa-cors": "0.0.16",
     "koa-route": "^2.4.2",
     "parse-link-header": "^0.4.1",
     "stack-utils": "^0.3.0"
