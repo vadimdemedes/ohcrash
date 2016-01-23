@@ -89,6 +89,7 @@ function * authorize (context) {
 
 	context.user = related.user;
 	context.project = related.project;
+	context.project.id = data.project;
 }
 
 
@@ -130,9 +131,7 @@ function run () {
 				return run();
 			}
 
-			console.log(item);
-
-			// rootRef.child('projects/' + item.user.id + '/' + item.project.id)
+			rootRef.child('projects/' + item.user.id + '/' + item.project.id).child('updatedAt').set(new Date());
 
 			return github.createIssue(process.env.GITHUB_AUTH_TOKEN, item.user.username, item.project.name, {
 				title: item.err.name + ': ' + item.err.message,
