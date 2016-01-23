@@ -131,8 +131,7 @@ function run () {
 				return run();
 			}
 
-			rootRef.child('projects/' + item.user.id + '/' + item.project.id).child('updatedAt').set(new Date());
-			console.log(rootRef.child('projects/' + item.user.id + '/' + item.project.id).child('updatedAt').toString());
+			rootRef.child('projects/' + item.user.id + '/' + item.project.id).child('lastErrorAt').set(Firebase.ServerValue.TIMESTAMP);
 
 			return github.createIssue(process.env.GITHUB_AUTH_TOKEN, item.user.username, item.project.name, {
 				title: item.err.name + ': ' + item.err.message,
