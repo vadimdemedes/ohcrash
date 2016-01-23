@@ -82,8 +82,13 @@ function * authorize (context) {
 		throw err;
 	}
 
-	context.user = yield get('users/' + data.user);
-	context.project = yield get('projects/' + data.user + '/' + data.project);
+	let related = yield {
+		user: get('users/' + data.user),
+		project: get('projects/' + data.user + '/' + data.project)
+	};
+
+	context.user = related.user;
+	context.project = related.project;
 }
 
 
@@ -124,6 +129,10 @@ function run () {
 				isRunning = false;
 				return run();
 			}
+
+			console.log(item);
+
+			// rootRef.child('projects/' + item.user.id + '/' + item.project.id)
 
 			return github.createIssue(process.env.GITHUB_AUTH_TOKEN, item.user.username, item.project.name, {
 				title: item.err.name + ': ' + item.err.message,
