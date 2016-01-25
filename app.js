@@ -157,7 +157,11 @@ function run () {
 function issue (err) {
 	delete err.props.labels;
 
-	err.cleanStack = stackUtils.clean(err.stack);
+	err.cleanStack = err.stack ? stackUtils.clean(err.stack) : 'No stack trace';
+
+	if (!err.stack) {
+		err.stack = 'No stack trace';
+	}
 
 	return ejs.render(template, err);
 }
