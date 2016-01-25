@@ -6,6 +6,7 @@
 
 const StackUtils = require('stack-utils');
 const Firebase = require('firebase');
+const humanize = require('humanize-string');
 const route = require('koa-route');
 const parse = require('co-body');
 const cors = require('koa-cors');
@@ -162,6 +163,17 @@ function issue (err) {
 	if (!err.stack) {
 		err.stack = 'No stack trace';
 	}
+
+	var props = [];
+
+	Object.keys(err.props).forEach(function (key) {
+		props.push({
+			name: humanize(key),
+			value: err.props[key]
+		});
+	});
+
+	err.props = props;
 
 	return ejs.render(template, err);
 }
