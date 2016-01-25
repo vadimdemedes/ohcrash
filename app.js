@@ -166,14 +166,14 @@ function issue (err) {
 
 	var props = [];
 
-	Object.keys(err.props).forEach(function (key) {
+	Object.keys(err.metaData).forEach(function (key) {
 		props.push({
 			name: humanize(key),
-			value: err.props[key]
+			value: err.metaData[key]
 		});
 	});
 
-	err.props = props;
+	err.metaData = props;
 
 	return ejs.render(template, err);
 }
