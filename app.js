@@ -30,6 +30,15 @@ const template = fs.readFileSync('template.ejs', 'utf8');
 
 let app = koa();
 
+app.use(function *(next) {
+	try {
+		yield next;
+	} catch (err) {
+		this.status = err.status || 500;
+		this.body = 'Internal Server Error';
+	}
+});
+
 app.use(cors());
 app.use(route.post('/v1/errors', function * () {
 	yield authorize(this);
