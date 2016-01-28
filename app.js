@@ -7,11 +7,13 @@
 const StackUtils = require('stack-utils');
 const Firebase = require('firebase');
 const humanize = require('humanize-string');
+const domain = require('domain');
 const route = require('koa-route');
 const parse = require('co-body');
 const cors = require('koa-cors');
 const ejs = require('ejs');
 const got = require('got');
+const kue = require('kue');
 const koa = require('koa');
 const fs = require('fs');
 
@@ -36,6 +38,7 @@ app.use(function *(next) {
 	} catch (err) {
 		this.status = err.status || 500;
 		this.body = 'Internal Server Error';
+		console.log(err.stack);
 	}
 });
 
@@ -45,11 +48,11 @@ app.use(route.post('/v1/errors', function * () {
 
 	let body = yield parse(this);
 
-	queue({
+	queue.create('error', {
 		project: this.project,
 		user: this.user,
 		err: body
-	});
+	}).save();
 
 	this.body = '';
 }));
@@ -107,63 +110,60 @@ function * authorize (context) {
  * Queue
  */
 
-let isRunning = false;
-let items = [];
+const queue = kue.createQueue({
+	redis: process.env.REDIS_URL
+});
 
-function queue (item) {
-	items.unshift(item);
+queue.process('error', 1, function (job, done) {
+	var d = domain.create();
+	d.on('error', function (err) {
+		console.log(err.stack);
+		done();
+	});
 
-	if (!isRunning) {
-		run();
-	}
-}
-
-function run () {
-	isRunning = true;
-
-	if (items.length === 0) {
-		isRunning = false;
-		return;
-	}
-
-	let item = items[items.length - 1];
-	if (!item.err.name) {
-		item.err.name = 'Unknown error';
-	}
-
-	if (!item.err.message) {
-		item.err.message = 'No message';
-	}
-
-	github.findIssues(item.user.githubAccessToken, item.user.username, item.project.name)
-		.then(function (issues) {
-			return issues.filter(function (issue) {
-				return issue.title === (item.err.name + ': ' + item.err.message) && issue.state === 'open';
-			});
-		})
-		.then(function (issues) {
-			if (issues.length > 0) {
-				items.pop();
-				isRunning = false;
-				return run();
-			}
-
-			rootRef.child('projects/' + item.user.id + '/' + item.project.id).child('lastErrorAt').set(Firebase.ServerValue.TIMESTAMP);
-
-			return github.createIssue(process.env.GITHUB_AUTH_TOKEN, item.user.username, item.project.name, {
-				title: item.err.name + ': ' + item.err.message,
-				body: issue(item.err),
-				labels: item.err.props.labels || []
-			});
-		})
-		.then(function () {
-			items.pop();
-			isRunning = false;
-			run();
-		})
-		.catch(function (err) {
-			console.log(err, err.stack);
+	d.run(function () {
+		reportError(job.data).then(done).catch(function (err) {
+			console.log(job.data);
+			console.log(err.stack);
+			done();
 		});
+	});
+});
+
+function reportError (item) {
+	return new Promise(function (resolve, reject) {
+		if (!item.err.name) {
+			item.err.name = 'Unknown error';
+		}
+
+		if (!item.err.message) {
+			item.err.message = 'No message';
+		}
+
+		github.findIssues(item.user.githubAccessToken, item.user.username, item.project.name)
+			.then(function (issues) {
+				return issues.filter(function (issue) {
+					return issue.title === (item.err.name + ': ' + item.err.message) && issue.state === 'open';
+				});
+			})
+			.then(function (issues) {
+				if (issues.length > 0) {
+					return resolve();
+				}
+
+				rootRef.child('projects/' + item.user.id + '/' + item.project.id).child('lastErrorAt').set(Firebase.ServerValue.TIMESTAMP);
+
+				return github.createIssue(process.env.GITHUB_AUTH_TOKEN, item.user.username, item.project.name, {
+					title: item.err.name + ': ' + item.err.message,
+					body: issue(item.err),
+					labels: item.err.props.labels || []
+				});
+			})
+			.then(function () {
+				resolve();
+			})
+			.catch(reject);
+	});
 }
 
 
