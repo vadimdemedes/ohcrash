@@ -118,6 +118,13 @@ function run () {
 	}
 
 	let item = items[items.length - 1];
+	if (!item.err.name) {
+		item.err.name = 'Unknown error';
+	}
+
+	if (!item.err.message) {
+		item.err.message = 'No message';
+	}
 
 	github.findIssues(item.user.githubAccessToken, item.user.username, item.project.name)
 		.then(function (issues) {
