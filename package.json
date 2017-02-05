@@ -15,6 +15,7 @@
     "lib",
     "index.js"
   ],
+  "bin": "cli.js",
   "main": "index.js",
   "dependencies": {
     "got": "^6.7.1",
