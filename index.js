@@ -22,7 +22,7 @@ if (!repo) {
 	throw new TypeError('GitHub repository name is required. Set `GITHUB_REPO` environment variable.');
 }
 
-module.exports = async (req, res) => {
+module.exports = async req => {
 	const data = await json(req);
 	const err = normalizeError(data);
 
