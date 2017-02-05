@@ -11,15 +11,18 @@ const user = process.env.GITHUB_USER;
 const repo = process.env.GITHUB_REPO;
 
 if (!token) {
-	throw new TypeError('GitHub token is required. Set `GITHUB_TOKEN` environment variable.');
+	console.log('GitHub token is required. Set `GITHUB_TOKEN` environment variable.');
+	process.exit(1); // eslint-disable-line unicorn/no-process-exit
 }
 
 if (!user) {
-	throw new TypeError('GitHub user name is required. Set `GITHUB_USER` environment variable.');
+	console.log('GitHub user name is required. Set `GITHUB_USER` environment variable.');
+	process.exit(1); // eslint-disable-line unicorn/no-process-exit
 }
 
 if (!repo) {
-	throw new TypeError('GitHub repository name is required. Set `GITHUB_REPO` environment variable.');
+	console.log('GitHub repository name is required. Set `GITHUB_REPO` environment variable.');
+	process.exit(1); // eslint-disable-line unicorn/no-process-exit
 }
 
 module.exports = async req => {
