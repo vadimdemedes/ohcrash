@@ -1,18 +1,32 @@
 {
+  "name": "ohcrash",
+  "version": "1.0.0",
+  "description": "Report errors directly to GitHub Issues",
+  "author": "Vadim Demedes <vdemedes@gmail.com>",
+  "repository": "vadimdemedes/ohcrash",
   "scripts": {
-    "start": "node app"
+    "start": "micro",
+    "test": "xo"
   },
+  "engines": {
+    "node": ">= 4"
+  },
+  "files": [
+    "lib",
+    "index.js"
+  ],
+  "main": "index.js",
   "dependencies": {
-    "co-body": "^4.0.0",
-    "ejs": "^2.3.4",
-    "firebase": "^2.3.2",
-    "got": "^6.1.0",
+    "got": "^6.7.1",
     "humanize-string": "^1.0.1",
-    "koa": "^1.1.2",
-    "koa-cors": "0.0.16",
-    "koa-route": "^2.4.2",
-    "kue": "^0.10.5",
+    "micro": "^7.0.0",
+    "object-to-map": "^2.0.0",
     "parse-link-header": "^0.4.1",
-    "stack-utils": "^0.3.0"
+    "stack-utils": "^1.0.0",
+    "strip-indent": "^2.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.1",
+    "xo": "^0.17.1"
   }
 }
