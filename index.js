@@ -38,14 +38,8 @@ module.exports = async req => {
 	});
 
 	if (!isDuplicate) {
-		await createIssue({
-			token,
-			user,
-			repo,
-			title,
-			labels: err.props.labels,
-			body
-		});
+		const labels = err.props.labels;
+		await createIssue({token, user, repo, title, labels, body});
 	}
 
 	return null;
