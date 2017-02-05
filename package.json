@@ -9,7 +9,7 @@
     "test": "xo && ava"
   },
   "engines": {
-    "node": ">= 4"
+    "node": ">= 6"
   },
   "files": [
     "lib",
