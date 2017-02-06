@@ -1,6 +1,6 @@
 {
   "name": "ohcrash",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Report errors directly to GitHub Issues",
   "author": "Vadim Demedes <vdemedes@gmail.com>",
   "repository": "vadimdemedes/ohcrash",
